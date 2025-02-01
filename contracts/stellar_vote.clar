@@ -109,6 +109,22 @@
     )
 )
 
+(define-public (end-election (election-id uint))
+    (let (
+        (election (unwrap! (map-get? Elections {election-id: election-id}) err-election-not-found))
+    )
+    (if (is-eq tx-sender contract-owner)
+        (begin
+            (map-set Elections
+                {election-id: election-id}
+                (merge election {status: "ended"})
+            )
+            (ok true)
+        )
+        err-unauthorized
+    ))
+)
+
 (define-public (cast-vote (election-id uint) (candidate-id uint))
     (let (
         (voter-info (unwrap! (map-get? Voters {election-id: election-id, voter: tx-sender}) err-not-registered))
