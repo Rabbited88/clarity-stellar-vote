@@ -16,6 +16,7 @@ A secure and transparent blockchain-based voting platform built on the Stacks ne
 - Real-time vote tallying
 - Election status tracking
 - Vote verification system
+- Manual election ending by administrator
 
 ## Security
 
@@ -23,3 +24,10 @@ A secure and transparent blockchain-based voting platform built on the Stacks ne
 - One vote per voter per election
 - Immutable vote records
 - Transparent vote counting
+- Elections can be explicitly ended by administrator
+
+## Changes in Latest Version
+
+- Added ability for contract owner to manually end elections using the `end-election` function
+- Enhanced election status tracking
+- Added test coverage for election ending functionality
