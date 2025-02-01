@@ -93,6 +93,38 @@ Clarinet.test({
 });
 
 Clarinet.test({
+  name: "Test election ending functionality",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    const deployer = accounts.get('deployer')!;
+    const voter1 = accounts.get('wallet_1')!;
+    
+    // Create and end election
+    let block1 = chain.mineBlock([
+      Tx.contractCall('stellar-vote', 'create-election', [
+        types.ascii("Test Election"),
+        types.ascii("A test election"),
+        types.uint(100)
+      ], deployer.address),
+      Tx.contractCall('stellar-vote', 'end-election', [
+        types.uint(0)
+      ], deployer.address)
+    ]);
+    
+    // Try to vote in ended election
+    let block2 = chain.mineBlock([
+      Tx.contractCall('stellar-vote', 'cast-vote', [
+        types.uint(0),
+        types.uint(1)
+      ], voter1.address)
+    ]);
+    
+    block1.receipts[0].result.expectOk();
+    block1.receipts[1].result.expectOk();
+    block2.receipts[0].result.expectErr().expectUint(102); // err-election-ended
+  }
+});
+
+Clarinet.test({
   name: "Ensure voters cannot vote twice",
   async fn(chain: Chain, accounts: Map<string, Account>) {
     const deployer = accounts.get('deployer')!;
